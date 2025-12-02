@@ -78,6 +78,596 @@
         </div>
 
         <!-- Conversion Options and Preview -->
+        <div id="converter-controls" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+            
+            <!-- Column 1: Conversion Settings -->
+            <div class="lg:col-span-1 p-6 bg-blue-50 rounded-xl shadow-lg h-fit">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">Conversion Settings (Badlav Chunain)</h2>
+
+                <!-- 1. Format Selection -->
+                <div class="mb-5">
+                    <label for="output-format" class="block text-md font-semibold text-gray-700 mb-2">Output Format (Nateeje ka Format):</label>
+                    <select id="output-format" class="w-full p-3 border border-gray-300 rounded-lg bg-white text-lg focus:ring-blue-500 focus:border-blue-500">
+                        <option value="image/png">PNG</option>
+                        <option value="image/jpeg" selected>JPEG/JPG</option>
+                        <option value="image/webp">WEBP</option>
+                        <option value="application/pdf">PDF</option>
+                    </select>
+                </div>
+
+                <!-- 2. Quality/Compression (only for JPEG/WEBP) -->
+                <div id="quality-setting" class="mb-5">
+                    <label for="compression-quality" class="block text-md font-semibold text-gray-700 mb-2 flex justify-between items-center">
+                        Compression Quality (Dabao Ki Gunvatta):
+                        <span id="quality-value" class="text-sm font-medium text-blue-600">90%</span>
+                    </label>
+                    <input type="range" id="compression-quality" min="10" max="100" value="90" step="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg transition-colors duration-200">
+                </div>
+
+                <!-- 3. Resizing -->
+                <div class="mb-5">
+                    <label class="block text-md font-semibold text-gray-700 mb-2">Image Resize Karein (Size Badlein):</label>
+                    <div class="flex space-x-3">
+                        <input type="number" id="resize-width" placeholder="Width (Chaurai)" class="w-1/2 p-3 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500" value="0">
+                        <input type="number" id="resize-height" placeholder="Height (Lambaai)" class="w-1/2 p-3 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500" value="0">
+                    </div>
+                    <div class="mt-2 flex items-center">
+                        <input type="checkbox" id="keep-aspect" checked class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <label for="keep-aspect" class="ml-2 text-sm text-gray-600">Aspect Ratio Banayein Rakhein</label>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button onclick="performConversion(true)" id="convert-button" class="w-full mt-4 p-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition duration-200 shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed">
+                    Convert Karein (Badlein)
+                </button>
+            </div>
+
+            <!-- Column 2: Live Preview -->
+            <div class="lg:col-span-2 p-6 bg-gray-100 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold text-gray-700 mb-4 border-b pb-2">Live Preview & Download (Turant Dekhein aur Download Karein)</h2>
+                
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <!-- Original Image Preview -->
+                    <div class="w-full md:w-1/2 bg-white p-3 rounded-lg border border-gray-200 flex flex-col items-center">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">Original Image (Asli Tasveer)</h3>
+                        <img id="original-preview" class="max-w-full max-h-48 object-contain rounded" alt="Original Image Preview" style="display: none;">
+                        <p id="original-placeholder" class="text-gray-400 text-sm mt-4">No image uploaded.</p>
+                    </div>
+
+                    <!-- Converted Image Preview -->
+                    <div class="w-full md:w-1/2 bg-white p-3 rounded-lg border border-gray-200 flex flex-col items-center">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">Converted Preview (Badli Hui Tasveer)</h3>
+                        <canvas id="conversion-canvas" class="max-w-full max-h-48 object-contain rounded border border-dashed border-gray-300 w-full h-48"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Download Section -->
+                <div id="download-section" class="mt-6 p-4 bg-green-100 rounded-lg border-2 border-green-300 hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-center">
+                        <div class="text-left mb-3 sm:mb-0">
+                            <p class="text-xl font-bold text-green-800">Conversion Successful! (Badlav Kamyab Hua)</p>
+                            <p class="text-sm text-green-700">New Size: <span id="converted-size" class="font-semibold">--</span></p>
+                        </div>
+                        <button onclick="downloadImage()" class="p-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-150 shadow-md flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 11.586V3a1 1 0 112 0v8.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Download (Download Karein)
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- *************************************************************** -->
+        <!-- START: SEO CONTENT ADDED BELOW THE TOOL -->
+        <!-- *************************************************************** -->
+        <section class="mt-12 p-6 bg-gray-50 rounded-xl shadow-inner">
+            <h2 class="text-3xl font-extrabold text-blue-700 mb-6 border-b-4 border-blue-200 pb-2">💡 Hamare Online Image Converter Ke Fayde</h2>
+            <p class="text-lg text-gray-700 mb-6">Agar aapko jaldi se apni photo ko **PNG se JPG**, **Image se PDF**, ya **WEBP** format mein badalna hai, toh hamara tool aapke liye sabse behtar hai. Yeh 100% free, tez (fast), aur secure hai.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="p-4 bg-white rounded-lg shadow-md border-t-4 border-green-500">
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">100% Secure & Private</h3>
+                    <p class="text-gray-600 text-sm">Aapki file server par upload nahi hoti. Saara conversion aapke browser (offline) mein hi hota hai. Isliye yeh sabse zyada secure hai.</p>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow-md border-t-4 border-blue-500">
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">PDF aur WEBP Support</h3>
+                    <p class="text-gray-600 text-sm">Hum **JPEG, PNG ke alawa PDF aur modern WEBP** formats mein bhi conversion support karte hain. Photos ko documents mein badalna ab aasan hai.</p>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow-md border-t-4 border-yellow-500">
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Resize aur Quality Control</h3>
+                    <p class="text-gray-600 text-sm">Aap apni zaroorat ke mutabik image ki chaurai aur lambaai (width/height) badal sakte hain, saath hi JPG/WEBP ki compression quality bhi set kar sakte hain.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-12 p-6 bg-white rounded-xl shadow-lg">
+            <h2 class="text-3xl font-extrabold text-gray-800 mb-6 border-b-4 border-gray-300 pb-2">📚 Image Conversion Guide aur Formats ki Jaankari</h2>
+            
+            <!-- How-to Guide -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-blue-600 mb-3">Image Convert Karne Ka Tarika</h3>
+                <ol class="list-decimal list-inside space-y-3 pl-4 text-gray-700">
+                    <li>**Image Upload Karein:** Upar diye gaye drag & drop box mein apni image file (JPG, PNG, GIF, aadi) daalein ya "Click Karke Upload Karein" button par click karein.</li>
+                    <li>**Settings Chunain:** 'Output Format' mein **PNG, JPEG/JPG, PDF, ya WEBP** chunain.</li>
+                    <li>**Quality/Size Adjust Karein (Optional):** Agar zaroorat ho, toh image ko resize karein aur compression quality ko adjust karein.</li>
+                    <li>**Convert Par Click Karein:** **"Convert Karein"** button dabayein. Conversion turant ho jayega aur aapko download link mil jayega.</li>
+                </ol>
+            </div>
+
+            <!-- Format Comparison -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-blue-600 mb-3">Kaunsa Format Chunain? (JPG vs PNG vs PDF)</h3>
+                
+                <p class="text-gray-700 mb-3">Sahi format chunna bahut zaroori hai. Neeche mukhy formats aur unke fayde diye gaye hain:</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- JPG/JPEG -->
+                    <div class="p-4 border border-gray-200 rounded-lg">
+                        <span class="font-extrabold text-xl text-red-600">JPEG/JPG</span>
+                        <p class="text-sm text-gray-600 mt-1">Best for **Photos** and **Complex Images**.</p>
+                        <ul class="text-xs list-disc list-inside mt-2 space-y-1 text-gray-500">
+                            <li>Lossy Compression (Quality kam karne par size kam hota hai).</li>
+                            <li>Aamtaur par sabse chota file size.</li>
+                            <li>Transparency (background) support nahi karta.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- PNG -->
+                    <div class="p-4 border border-gray-200 rounded-lg">
+                        <span class="font-extrabold text-xl text-green-600">PNG</span>
+                        <p class="text-sm text-gray-600 mt-1">Best for **Logos**, **Graphics**, and **Screenshots**.</p>
+                        <ul class="text-xs list-disc list-inside mt-2 space-y-1 text-gray-500">
+                            <li>Lossless Compression (Quality kam nahi hoti).</li>
+                            <li>Background Transparency (Aapko clear background milta hai).</li>
+                            <li>JPEG se bade files hote hain.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- PDF -->
+                    <div class="p-4 border border-gray-200 rounded-lg">
+                        <span class="font-extrabold text-xl text-purple-600">PDF</span>
+                        <p class="text-sm text-gray-600 mt-1">Best for **Documents**, **Printing**, and **Sharing**.</p>
+                        <ul class="text-xs list-disc list-inside mt-2 space-y-1 text-gray-500">
+                            <li>Document format, image format nahi hai.</li>
+                            <li>Printing aur professional sharing ke liye ideal.</li>
+                            <li>Aapki image ko ek document page mein daal deta hai.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+        <!-- *************************************************************** -->
+        <!-- END: SEO CONTENT -->
+        <!-- *************************************************************** -->
+        
+    </div> <!-- End Main Container -->
+
+    <!-- AdSense ke liye zaroori, website ka basic information footer mein hona chahiye -->
+    <footer class="mt-8 py-4 border-t border-gray-300 text-center text-gray-500 text-sm w-full max-w-6xl mx-auto">
+        &copy; 2025 Online Image Converter. All rights reserved. 
+        <!-- Privacy Policy file ka link -->
+        <a href="privacy.html" class="text-blue-600 hover:text-blue-800 font-medium ml-4">Privacy Policy</a>
+        <!-- Contact Us link (Naya email address) -->
+        <a href="mailto:nomimalik554@gmail.com" class="text-blue-600 hover:text-blue-800 font-medium ml-4">Contact Us</a>
+    </footer>
+
+    <script>
+        // Global variables to store image data and original file name
+        let originalImage = null; 
+        let originalFileName = "my_converted_image";
+
+        // DOM elements
+        const dropZone = document.getElementById('drop-zone');
+        const uploadInput = document.getElementById('image-upload');
+        const infoSection = document.getElementById('image-info-section');
+        const controls = document.getElementById('converter-controls');
+        const originalPreview = document.getElementById('original-preview');
+        const originalPlaceholder = document.getElementById('original-placeholder');
+        const canvas = document.getElementById('conversion-canvas');
+        const qualitySlider = document.getElementById('compression-quality');
+        const qualityValue = document.getElementById('quality-value');
+        const outputFormat = document.getElementById('output-format');
+        const downloadSection = document.getElementById('download-section');
+        const statusAlert = document.getElementById('status-alert');
+        const resizeWidthInput = document.getElementById('resize-width');
+        const resizeHeightInput = document.getElementById('resize-height');
+        const qualitySetting = document.getElementById('quality-setting');
+        
+        // jsPDF instance access (defined in the loaded script)
+        const { jsPDF } = window.jspdf;
+
+
+        // --- Utility Functions for Custom Alert ---
+        function alertUser(message, type = 'danger', duration = 5000) {
+            statusAlert.textContent = message;
+            statusAlert.className = 'p-4 mb-6 text-sm font-medium rounded-lg';
+            
+            if (type === 'danger') {
+                statusAlert.classList.add('bg-red-100', 'text-red-700');
+            } else if (type === 'success') {
+                statusAlert.classList.add('bg-green-100', 'text-green-700');
+            } else if (type === 'info') {
+                 statusAlert.classList.add('bg-blue-100', 'text-blue-700');
+            }
+            statusAlert.classList.remove('hidden');
+
+            setTimeout(() => {
+                statusAlert.classList.add('hidden');
+            }, duration);
+        }
+        
+        // --- Event Listeners for Drag and Drop ---
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // Event listener for image upload button
+        function handleImageUpload(e) {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        }
+        
+        // Event listeners for settings change (to automatically trigger conversion)
+        qualitySlider.addEventListener('input', updateQualityValue);
+        qualitySlider.addEventListener('change', () => performConversion(false)); // Auto-update preview
+        outputFormat.addEventListener('change', updateFormatVisibility);
+        outputFormat.addEventListener('change', () => performConversion(false)); // Auto-update preview
+        resizeWidthInput.addEventListener('change', updateResizeDimensions);
+        resizeHeightInput.addEventListener('change', updateResizeDimensions);
+        document.getElementById('keep-aspect').addEventListener('change', updateResizeDimensions);
+
+        // --- Utility Functions ---
+
+        // Display quality percentage value
+        function updateQualityValue() {
+            qualityValue.textContent = qualitySlider.value + '%';
+        }
+
+        // Show/Hide quality slider based on selected format
+        function updateFormatVisibility() {
+            const format = outputFormat.value;
+            // Quality slider sirf JPEG aur WEBP ke liye chahiye (PNG/PDF lossless hote hain)
+            if (format === 'image/jpeg' || format === 'image/webp') {
+                qualitySetting.classList.remove('hidden');
+            } else {
+                qualitySetting.classList.add('hidden');
+            }
+        }
+        
+        // Update width/height based on aspect ratio
+        function updateResizeDimensions(event) {
+            if (!originalImage) return;
+
+            const keepAspect = document.getElementById('keep-aspect').checked;
+            
+            // Agar aspect ratio lock hai toh doosre field ko update karein
+            if (keepAspect) {
+                const originalWidth = originalImage.width;
+                const originalHeight = originalImage.height;
+                const target = event.target;
+
+                if (target.id === 'resize-width') {
+                    const newWidth = parseInt(target.value);
+                    if (!isNaN(newWidth) && newWidth > 0) {
+                        const newHeight = Math.round((originalHeight / originalWidth) * newWidth);
+                        resizeHeightInput.value = newHeight;
+                    }
+                } else if (target.id === 'resize-height') {
+                    const newHeight = parseInt(target.value);
+                    if (!isNaN(newHeight) && newHeight > 0) {
+                        const newWidth = Math.round((originalWidth / originalHeight) * newHeight);
+                        resizeWidthInput.value = newWidth;
+                    }
+                }
+            }
+            
+            // Auto-update preview (important=false)
+            performConversion(false);
+        }
+
+        // --- Core File Handling ---
+        function handleFile(file) {
+            // Reset state
+            originalImage = null;
+            infoSection.classList.add('hidden');
+            controls.classList.add('hidden');
+            downloadSection.classList.add('hidden');
+            originalPreview.style.display = 'none';
+            originalPlaceholder.style.display = 'block';
+            canvas.style.backgroundImage = 'none'; // Clear canvas preview
+            canvas.style.border = '4px dashed #9ca3af';
+
+            // File size check (Max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alertUser("File 5MB se badi hai. Kripya choti file upload karein.", 'danger');
+                return;
+            }
+            
+            // File type check
+            if (!file.type.startsWith('image/')) {
+                alertUser("Yeh ek image file nahi hai. Kripya sahi format upload karein.", 'danger');
+                return;
+            }
+
+            // Clean the file name for download later
+            originalFileName = file.name.substring(0, file.name.lastIndexOf('.')) || 'converted_image';
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    originalImage = img;
+                    
+                    // Update Info Section
+                    document.getElementById('original-filename').textContent = file.name;
+                    document.getElementById('original-size').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+                    document.getElementById('original-dimensions').textContent = `${img.width} x ${img.height} pixels`;
+                    
+                    // Set initial resize values
+                    resizeWidthInput.value = img.width;
+                    resizeHeightInput.value = img.height;
+                    
+                    // Show sections
+                    infoSection.classList.remove('hidden');
+                    controls.classList.remove('hidden');
+                    originalPreview.src = e.target.result;
+                    originalPreview.style.display = 'block';
+                    originalPlaceholder.style.display = 'none';
+
+                    alertUser("Image successfully loaded! Ab settings chunain.", 'success', 3000);
+
+                    // Initial conversion on load (for preview)
+                    performConversion(false);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- Main Conversion Logic ---
+        function performConversion(isDownloadClick) {
+            if (!originalImage) {
+                if(isDownloadClick) alertUser("Pehle ek image upload karein.", 'danger');
+                return;
+            }
+
+            if(isDownloadClick) {
+                alertUser("Conversion ho raha hai... (Converting for download)", 'info');
+            } else {
+                // Only for preview, no need for detailed status unless it's the final button click
+                downloadSection.classList.add('hidden');
+            }
+            
+            const targetFormat = outputFormat.value;
+            const quality = parseInt(qualitySlider.value) / 100;
+            
+            let targetWidth = parseInt(resizeWidthInput.value);
+            let targetHeight = parseInt(resizeHeightInput.value);
+            
+            // Validation and fallback for dimensions
+            if (isNaN(targetWidth) || targetWidth <= 0) targetWidth = originalImage.width;
+            if (isNaN(targetHeight) || targetHeight <= 0) targetHeight = originalImage.height;
+
+            // Canvas dimensions set
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, targetWidth, targetHeight); 
+            
+            // Draw image with resizing
+            ctx.drawImage(originalImage, 0, 0, targetWidth, targetHeight);
+
+            // Special handling for PDF
+            if (targetFormat === 'application/pdf') {
+                if(isDownloadClick) {
+                    convertToPDF(canvas, targetWidth, targetHeight);
+                    alertUser(`Conversion successful! Downloading PDF file.`, 'success', 4000);
+                }
+                // PDF preview is not practical, so we show a success message on the canvas
+                ctx.fillStyle = '#1e40af'; 
+                ctx.fillRect(0, 0, targetWidth, targetHeight);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 30px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('PDF Ready', targetWidth / 2, targetHeight / 2);
+                
+                // Since canvas.toBlob is not used, we can't calculate final size easily.
+                // We'll show a placeholder size for the preview.
+                document.getElementById('converted-size').textContent = 'PDF (size unknown)';
+                downloadSection.classList.remove('hidden');
+
+            } else {
+                // Conversion happens here (using toBlob for asynchronous and efficient conversion)
+                try {
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            // Display converted size
+                            const convertedSizeMB = (blob.size / 1024 / 1024).toFixed(2) + ' MB';
+                            document.getElementById('converted-size').textContent = convertedSizeMB;
+
+                            // Only update preview if it's not a download click
+                            if (!isDownloadClick) {
+                                const dataUrl = URL.createObjectURL(blob);
+                                // Set the canvas size correctly for the preview area
+                                canvas.style.backgroundImage = `url(${dataUrl})`;
+                                canvas.style.backgroundSize = 'contain';
+                                canvas.style.backgroundRepeat = 'no-repeat';
+                                canvas.style.backgroundPosition = 'center';
+                                canvas.style.border = 'none'; // Remove dashed border after conversion
+                                URL.revokeObjectURL(dataUrl); // Release object URL immediately
+
+                                downloadSection.classList.remove('hidden');
+                            } else {
+                                // This runs only if it was triggered by the 'Convert' button (isDownloadClick=true)
+                                downloadImageBlob(blob, targetFormat);
+                                alertUser(`Conversion successful! Downloading ${targetFormat.split('/')[1].toUpperCase().replace('JPEG', 'JPG')} file.`, 'success', 4000);
+                            }
+                        } else {
+                            alertUser("Conversion mein galti hui (Error: Blob creation failed).", 'danger');
+                        }
+                    }, targetFormat, quality);
+
+                } catch (error) {
+                    console.error("Conversion Error:", error);
+                    alertUser(`Conversion mein galti hui: ${error.message}`, 'danger');
+                }
+            }
+        }
+
+        // --- PDF Conversion Function ---
+        function convertToPDF(canvasElement, width, height) {
+            const filename = `${originalFileName.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+            const imgData = canvasElement.toDataURL('image/jpeg', 1.0); // PDF mein daalne ke liye JPG format best hai
+            
+            // Default size A4 (595.28 x 841.89 points)
+            const pdf = new jsPDF({
+                orientation: width > height ? 'l' : 'p', // Landscape or Portrait
+                unit: 'pt',
+                format: [width, height] // PDF ka size image ke size jitna hi rakhte hain
+            });
+
+            // Image ko PDF mein add karein
+            pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
+
+            // PDF download karein
+            pdf.save(filename);
+        }
+
+
+        // Helper function to handle the actual download using the blob (for image formats)
+        function downloadImageBlob(blob, targetFormat) {
+            const formatExtension = targetFormat.split('/')[1]; 
+            
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            // Ensure the downloaded file name is clean
+            let extension = formatExtension.replace('jpeg', 'jpg');
+            if (extension === 'jpg') {
+                // Agar user ne JPEG chuna hai, toh use JPG extension dein.
+                extension = 'jpg';
+            }
+            link.download = `${originalFileName.replace(/[^a-z0-9]/gi, '_')}_converted.${extension}`; 
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+
+        // --- Download Function (now just triggers conversion with download flag) ---
+        function downloadImage() {
+            // Re-trigger conversion, but this time with the flag set to true
+            performConversion(true);
+        }
+        
+        // Initial setup
+        updateQualityValue();
+        updateFormatVisibility(); 
+    </script>
+</body>
+</html>TYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNG, JPEG, PDF, WEBP Image Converter | Online Photo Resizer Tool</title>
+    <!-- AdSense aur SEO ke liye meta description zaroori hai -->
+    <meta name="description" content="Apni photos ko asani se PNG, JPEG/JPG, PDF, ya WEBP format mein convert karein. Quality control aur resizing features ke saath. Free online tool.">
+    
+    <!-- ****************************************************************** -->
+    <!-- !!! ADSense Verification Code YAHAN PASTE KAREIN (STEP 3) !!! -->
+    <!-- AdSense Code Yahan Rehna Chahiye agar aapne daala tha. -->
+    <!-- ****************************************************************** -->
+    
+    <!-- Tailwind CSS CDN for modern design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- PDF GENERATION LIBRARY: jsPDF for creating PDF files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        /* Modern font and basic styling */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        /* Custom styling for the drop zone */
+        #drop-zone {
+            border: 4px dashed #6b7280;
+            background-color: #ffffff;
+            transition: all 0.3s;
+        }
+        #drop-zone.drag-over {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        /* Ensure canvas background is visible when no image is loaded */
+        #conversion-canvas {
+            background-color: #f0f4f8; /* Light blue/gray background */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex flex-col">
+
+    <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-xl p-6 md:p-10 flex-grow w-full">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2">🚀 Online Image Converter</h1>
+            <p class="text-lg text-gray-500">Apni images ko **PNG, JPEG/JPG, PDF, ya WEBP** format mein badlein, resize karein, aur compress karein. (Browser mein kaam karta hai)</p>
+        </header>
+
+        <!-- ****************************************************************** -->
+        <!-- ADSense Ad Unit Placeholder -->
+        <div class="mb-6 bg-yellow-50 p-4 border border-yellow-300 rounded-lg text-center text-sm font-semibold text-yellow-800">
+            ADVERTISEMENT SPACE (AdSense Code Yahan Aayega)
+        </div>
+        <!-- ****************************************************************** -->
+
+        <!-- Message/Status Box -->
+        <div id="status-alert" class="hidden p-4 mb-6 text-sm font-medium rounded-lg" role="alert"></div>
+
+        <!-- Main Upload/Drop Zone -->
+        <div id="drop-zone" class="p-10 text-center rounded-xl cursor-pointer hover:border-blue-500 border-dashed border-gray-400 border-4 transition-colors mb-8">
+            <input type="file" id="image-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+            <label for="image-upload" class="block">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v8" />
+                </svg>
+                <p class="text-xl font-semibold text-gray-600">Drag & Drop Yahan Karein ya Click Karke Upload Karein</p>
+                <p class="text-sm text-gray-500 mt-1">JPEG, PNG, WEBP, GIF, BMP (Max 5MB)</p>
+            </label>
+        </div>
+
+        <div id="image-info-section" class="hidden bg-gray-50 p-6 rounded-lg shadow-inner mb-8">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4 border-b pb-2">Image Details (Tasveer Ki Jaankari)</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <p class="text-sm font-medium text-gray-600"><span class="font-bold text-gray-800">File:</span> <span id="original-filename">N/A</span></p>
+                <p class="text-sm font-medium text-gray-600"><span class="font-bold text-gray-800">Size:</span> <span id="original-size">N/A</span></p>
+                <p class="text-sm font-medium text-gray-600"><span class="font-bold text-gray-800">Dimensions:</span> <span id="original-dimensions">N/A</span></p>
+            </div>
+        </div>
+
+        <!-- Conversion Options and Preview -->
         <div id="converter-controls" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             <!-- Column 1: Conversion Settings -->
